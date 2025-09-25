@@ -16,7 +16,26 @@ const HomePage: React.FC = () => {
   const [isPinSelectorOpen, setIsPinSelectorOpen] = useState(false);
   const [selectedPin, setSelectedPin] = useState<PinCode | null>(null);
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const { user } = useAuth();
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setLoading(true);
+        const data = await productApi.getProducts();
+        setProducts(data || []);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to load products'));
+        console.error('Error loading products:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
 
   useEffect(() => {
     const savedPin = getFromLocalStorage<PinCode | null>(LOCAL_STORAGE_KEYS.USER_PIN, null);
