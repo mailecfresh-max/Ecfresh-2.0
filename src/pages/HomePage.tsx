@@ -6,7 +6,7 @@ import BannerSlider from '../components/common/BannerSlider';
 import LoyaltyProgressBar from '../components/common/LoyaltyProgressBar';
 import ProductCard from '../components/common/ProductCard';
 import PinCodeSelector from '../components/common/PinCodeSelector';
-import { sampleBanners, sampleCategories, sampleProducts } from '../data/sampleData';
+import { useProducts } from '../hooks/useProducts';
 import { PinCode } from '../types';
 import { useAuth } from '../hooks/useAuth';
 import { LOCAL_STORAGE_KEYS, getFromLocalStorage } from '../utils/localStorage';
@@ -15,9 +15,9 @@ import { productApi } from '../services/api';
 const HomePage: React.FC = () => {
   const [isPinSelectorOpen, setIsPinSelectorOpen] = useState(false);
   const [selectedPin, setSelectedPin] = useState<PinCode | null>(null);
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const { products, loading, error } = useProducts({
+    limit: 12
+  });
   const { user } = useAuth();
 
   useEffect(() => {
