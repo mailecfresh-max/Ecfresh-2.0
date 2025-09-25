@@ -10,10 +10,12 @@ import { sampleBanners, sampleCategories, sampleProducts } from '../data/sampleD
 import { PinCode } from '../types';
 import { useAuth } from '../hooks/useAuth';
 import { LOCAL_STORAGE_KEYS, getFromLocalStorage } from '../utils/localStorage';
+import { productApi } from '../services/api';
 
 const HomePage: React.FC = () => {
   const [isPinSelectorOpen, setIsPinSelectorOpen] = useState(false);
   const [selectedPin, setSelectedPin] = useState<PinCode | null>(null);
+  const [products, setProducts] = useState([]);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -24,6 +26,19 @@ const HomePage: React.FC = () => {
       // Show PIN selector if no PIN is selected
       setIsPinSelectorOpen(true);
     }
+  }, []);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const data = await productApi.getProducts();
+        setProducts(data);
+      } catch (error) {
+        console.error('Error loading products:', error);
+      }
+    };
+
+    loadProducts();
   }, []);
 
   const handlePinSelect = (pinCode: PinCode) => {
